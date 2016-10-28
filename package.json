@@ -1,0 +1,24 @@
+{
+  "name": "dependency-values",
+  "version": "1.0.0",
+  "description": "NOne",
+  "main": "index.js",
+  "dependencies": {
+    "dependency-tree": "^5.7.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChristofferHedberg/dependency-values.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChristofferHedberg/dependency-values/issues"
+  },
+  "homepage": "https://github.com/ChristofferHedberg/dependency-values#readme"
+}
+
