@@ -6,9 +6,14 @@
   "dependencies": {
     "dependency-tree": "^5.7.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "directory-structure-json": "^1.0.0",
+    "eslint": "^3.8.1"
+  },
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -21,4 +26,3 @@
   },
   "homepage": "https://github.com/ChristofferHedberg/dependency-values#readme"
 }
-
