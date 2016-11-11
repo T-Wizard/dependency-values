@@ -4,7 +4,10 @@ let fs = require( "fs" ); // you can select any filesystem as long as it impleme
 let path = require( "path" );
 
 let rootpath = path.resolve( "../picasso.js/" );
-let basepath = path.resolve( "../picasso.js/src/" );
+let basepath = path.resolve( "../picasso.js/" );
+
+let parser = require( "gitignore-parser" );
+let gitignore = parser.compile( fs.readFileSync( ".gitignore", "utf8" ) );
 
 let today = ( new Date() ).toISOString().split( "T" )[0];
 
@@ -45,50 +48,58 @@ let getNumOfExternal = function( curPath, dependencies ) {
 DirectoryStructureJSON.getStructure( fs, basepath, function ( err, structure, total ) {
     if ( err ) { console.log( err ); }
 
-    console.log( "There are a total of: ", total.folders, " folders and ", total.files, " files" );
+    console.log( "There are a total of: " + total.folders + " folders and " + total.files + " files" );
 
     let files = [];
     let maxLevel = 0;
+    let cur = 0;
 
     structure = recursive( structure, ( item, curPath ) => {
-      process.stdout.write( "." );
-
       if ( item.type === "file" ) {
+        cur++;
+
+        //let anim = [ "..", ".:", "::", ":." ][ cur % 4 ];
+        let anim = [ "⌌", "⌍", "⌏", "⌎" ][ cur % 4 ];
+
+        process.stdout.write( "\r[" + anim + "] Progress: " + Math.floor( ( cur / total.files ) * 100 ) + "% " );
+
         let wholeFilePath = basepath + curPath + "/" + item.name;
-        let relativePath = curPath + "/" + item.name;
+        let relativePath = ( curPath + "/" + item.name ).substr( 1 );
 
         wholeFilePath = wholeFilePath.replace( /\\/g, "" );
         relativePath = relativePath.replace( /\\/g, "" );
 
-        let tree = dependencyTree( {
-          filename: wholeFilePath,
-          directory: basepath
-        } );
+        if ( gitignore.accepts( relativePath ) && relativePath.indexOf( "/." ) !== 0 ) {
+          let tree = dependencyTree( {
+            filename: wholeFilePath,
+            directory: basepath
+          } );
 
-        let filePath = Object.keys( tree )[0];
-        let dependencies = Object.keys( tree[ filePath ] );
+          let filePath = Object.keys( tree )[0];
+          let dependencies = Object.keys( tree[ filePath ] );
 
-        let numDep = dependencies.length;
-        let numExt = getNumOfExternal( filePath, dependencies );
-        let numInt = numDep - numExt;
+          let numDep = dependencies.length;
+          let numExt = getNumOfExternal( filePath, dependencies );
+          let numInt = numDep - numExt;
 
-        let dependencyInfo = {
-          numberOfDependencies: numDep,
-          numberOfExternal: numExt,
-          numberOfInternal: numInt
-        };
+          let dependencyInfo = {
+            numberOfDependencies: numDep,
+            numberOfExternal: numExt,
+            numberOfInternal: numInt
+          };
 
-        item.dependencyInfo = dependencyInfo;
+          item.dependencyInfo = dependencyInfo;
 
-        let columns = relativePath.split( "/" );
+          let columns = ( "/" + relativePath ).split( "/" );
 
-        columns[0] = relativePath;
+          columns[0] = relativePath;
 
-        if ( columns.length > maxLevel ) {
-          maxLevel = columns.length;
+          if ( columns.length > maxLevel ) {
+            maxLevel = columns.length;
+          }
+
+          files.push( columns );
         }
-
-        files.push( columns );
       }
     } );
 
@@ -132,5 +143,5 @@ DirectoryStructureJSON.getStructure( fs, basepath, function ( err, structure, to
     //fs.writeFile( "./output/output.json", JSON.stringify( structure ) );
     fs.writeFile( "./output/treemap.csv", convertToCSV( nfiles ) );
 
-    console.log( "Done!" );
+    console.log( "\rDone!                                  " );
 } );

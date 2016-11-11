@@ -8,7 +8,8 @@
   },
   "devDependencies": {
     "directory-structure-json": "^1.0.0",
-    "eslint": "^3.8.1"
+    "eslint": "^3.8.1",
+    "gitignore-parser": "0.0.2"
   },
   "scripts": {
     "test": "test",
