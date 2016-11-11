@@ -129,8 +129,8 @@ DirectoryStructureJSON.getStructure( fs, basepath, function ( err, structure, to
         return output;
     };
 
-    fs.writeFile( "./output/output.json", JSON.stringify( structure ) );
-    fs.writeFile( "./output/files.csv", convertToCSV( nfiles ) );
+    //fs.writeFile( "./output/output.json", JSON.stringify( structure ) );
+    fs.writeFile( "./output/treemap.csv", convertToCSV( nfiles ) );
 
     console.log( "Done!" );
 } );
