@@ -3,8 +3,8 @@ let dependencyTree = require( "dependency-tree" );
 let fs = require( "fs" ); // you can select any filesystem as long as it implements the same functions that native fs uses.
 let path = require( "path" );
 
-let rootpath = path.resolve( "../picasso.js/" );
-let basepath = path.resolve( "../picasso.js/" );
+let rootpath = path.resolve( process.argv[2] );
+let basepath = path.resolve( process.argv[2] );
 
 let parser = require( "gitignore-parser" );
 let gitignore = parser.compile( fs.readFileSync( ".gitignore", "utf8" ) );
@@ -90,9 +90,8 @@ DirectoryStructureJSON.getStructure( fs, basepath, function ( err, structure, to
 
           item.dependencyInfo = dependencyInfo;
 
-          let columns = ( "/" + relativePath ).split( "/" );
-
-          columns[0] = relativePath;
+          //let columns = ( "/" + relativePath ).split( "/" );
+            let columns = [ today, relativePath, numDep,numExt,numInt ];
 
           if ( columns.length > maxLevel ) {
             maxLevel = columns.length;
@@ -103,34 +102,8 @@ DirectoryStructureJSON.getStructure( fs, basepath, function ( err, structure, to
       }
     } );
 
-    let nfiles = [];
-    let headerRow = [ "Date" ];
-
-    // Add the level headers
-    for ( let i = 1; i <= maxLevel - 1; i++ ) {
-        headerRow.push( "Level " + i );
-    }
-
-    // Add the path column
-    headerRow.push( "Path" );
-
-    nfiles.push( headerRow );
-
-    files.forEach( ( item ) => {
-        let row = item,
-            missingItems = maxLevel - item.length + 1;
-
-        if ( missingItems ){
-            row = item.concat( new Array( missingItems ).fill( "" ) );
-
-            // Move the file path to the last column
-            row[row.length - 1] = row[0];
-            row[0] = today;
-        }
-
-
-        nfiles.push( row );
-    } );
+    let headerRow = [ "Date", "Path", "Number of Dependencies", "Number of external Dependencies", "Number of internal Dependencies" ];
+    files.splice( 0,0, headerRow );
 
     let convertToCSV = function( table ) {
         let output = "";
@@ -141,7 +114,7 @@ DirectoryStructureJSON.getStructure( fs, basepath, function ( err, structure, to
     };
 
     //fs.writeFile( "./output/output.json", JSON.stringify( structure ) );
-    fs.writeFile( "./output/treemap.csv", convertToCSV( nfiles ) );
+    fs.writeFile( process.argv[3] || "output.csv" , convertToCSV( files ) );
 
     console.log( "\rDone!                                  " );
 } );
