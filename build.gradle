@@ -31,7 +31,7 @@ apply plugin: 'com.moowork.node'
 apply plugin: 'com.qlik.gradle.local-ivy'
 
 node {
-	version = '6.9.4'
+	version = '7.4.0'
 	npmVersion = '2.15.3'
 	distBaseUrl = 'https://nodejs.org/dist'
 	download = true
@@ -43,7 +43,7 @@ task npmDependencies(type: NpmTask) {
 	args = ['install', '--no-optional']
 }
 
-task run(type: Node) {
+task run(type: NodeTask) {
     dependsOn npmDependencies
 	script = file('index.js')
     args = ['../picasso/src', '../picasso/dependency-values.csv']
