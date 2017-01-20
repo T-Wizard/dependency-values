@@ -3,8 +3,8 @@ let dependencyTree = require( "dependency-tree" );
 let fs = require( "fs" ); // you can select any filesystem as long as it implements the same functions that native fs uses.
 let path = require( "path" );
 
-let rootpath = path.resolve( process.argv[2] );
-let basepath = path.resolve( process.argv[2] );
+let rootpath = path.resolve( process.argv[2] ).replace( /\\/g, "/" );
+let basepath = path.resolve( process.argv[2] ).replace( /\\/g, "/" );
 
 let parser = require( "gitignore-parser" );
 let gitignore = parser.compile( fs.readFileSync( ".gitignore", "utf8" ) );
@@ -76,6 +76,11 @@ DirectoryStructureJSON.getStructure( fs, basepath, function ( err, structure, to
           } );
 
           let filePath = Object.keys( tree )[0];
+          if( !filePath ) {
+            console.log( `[warn] ${wholeFilePath} ${basepath}` );
+            return;
+          }
+
           let dependencies = Object.keys( tree[ filePath ] );
 
           let numDep = dependencies.length;
