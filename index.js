@@ -7,8 +7,8 @@ var dependencyTree = require("dependency-tree");
 var fs = require("fs"); // you can select any filesystem as long as it implements the same functions that native fs uses.
 var path = require("path");
 
-var rootpath = path.resolve(process.argv[2]);
-var basepath = path.resolve(process.argv[2]);
+var rootpath = path.resolve(process.argv[2]).replace(/\\/g, "/");
+var basepath = rootpath;
 
 var parser = require("gitignore-parser");
 var gitignore = parser.compile(fs.readFileSync(".gitignore", "utf8"));
