@@ -39,6 +39,13 @@ node {
 	nodeModulesDir = file("${project.projectDir}")
 }
 
+ext {
+	srcDir = project.hasProperty('src_dir') ? src_dir : '../picasso/src'
+	resultDir = project.hasProperty('result_dir') ? result_dir : '../picasso'
+	resultFile = project.hasProperty('result_file') ? result_dir : "${resultDir}/dependency-values.csv"
+}
+
+
 task npmDependencies(type: NpmTask) {
 	args = ['install', '--no-optional']
 }
@@ -46,5 +53,5 @@ task npmDependencies(type: NpmTask) {
 task run(type: NodeTask) {
     dependsOn npmDependencies
 	script = file('index.js')
-    args = ['../picasso/src', '../picasso/dependency-values.csv']
+    args = [srcDir, resultFile]
 }
